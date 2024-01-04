@@ -13,8 +13,7 @@ RUN bundle install
 USER root
 USER 1001
 
-RUN apt update
-RUN apt install -y openfortivpn
+EXPOSE 3000
 
 
 
