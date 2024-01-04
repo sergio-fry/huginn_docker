@@ -1,7 +1,11 @@
 services:
+  vpn:
+    build:
+      dockerfile: Dockerfile.vpn
+      context: .
+
   web:
     build: .
-    network_mode: "host"
     ports:
       - 3000:3000
     command: bash -c "bundle exec rails db:migrate &&
@@ -25,8 +29,8 @@ services:
       - DATABASE_RECONNECT=true
       - SECRET_KEY_BASE=abc123
       - DATABASE_ADAPTER=postgresql
-      - DATABASE_HOST=0.0.0.0
-      - DATABASE_PORT=5431
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
       - DATABASE_NAME=huginn
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
@@ -34,8 +38,6 @@ services:
 
   db:
     image: postgres:16.1
-    ports:
-      - 5431:5432
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_DB=huginn

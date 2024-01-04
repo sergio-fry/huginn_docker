@@ -10,5 +10,11 @@ COPY env .env
 RUN bundle config set --local without 'develpoment test'
 RUN bundle install
 
+USER root
+USER 1001
+
+RUN apt update
+RUN apt install -y openfortivpn
+
 
 
