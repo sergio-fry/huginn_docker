@@ -6,7 +6,7 @@ ENV ADDITIONAL_GEMS=huginn_ruby_agent
 ENV PORT=3000
 ENV IP=0.0.0.0
 
-COPY env .env
+COPY env.build .env
 RUN bundle config set --local without 'develpoment test'
 RUN bundle install
 

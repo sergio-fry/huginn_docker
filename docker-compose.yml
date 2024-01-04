@@ -1,36 +1,32 @@
+x-huginn: &huginn
+  build: .
+  env_file: env
+  depends_on:
+    - db
+
 services:
+  # TODO: reverse proxy to host service
   web:
-    build: .
-    network_mode: "host"
+    <<: *huginn
+        #network_mode: "host"
+        #extra_hosts:
+        #  - "host.docker.internal:host-gateway"
     ports:
       - 3000:3000
-        #command: bash -c "bundle exec rails db:migrate &&
-        #bundle exec rails db:seed &&
-        #bundle exec rails server -p 3000 -b 0.0.0.0"
-    command: bundle exec rails server -p 3000 -b 0.0.0.0
+    command: bash -c "bundle exec rails db:migrate &&
+      bundle exec rails db:seed &&
+      bundle exec rails server -p 3000 -b 0.0.0.0"
     environment:
-    # - DATABASE_INITIAL_CONNECT_MAX_RETRIES=5
-      - INTENTIONALLY_SLEEP=10
-      - TIMEZONE=Moscow
-      - USE_GRAPHVIZ_DOT=dot
-      - USE_JQ=jq
-      - RAILS_SERVE_STATIC_FILES=true
-      - SCHEDULER_FREQUENCY=0.3
-      - ON_HEROKU=true
-      - ENABLE_INSECURE_AGENTS=true
-      - FAILED_JOBS_TO_KEEP=100
-      - DELAYED_JOB_MAX_RUNTIME=30
-      - DELAYED_JOB_SLEEP_DELAY=1
-      - DIAGRAM_DEFAULT_LAYOUT=fdp
-      - DATABASE_POOL=20
-      - DATABASE_RECONNECT=true
-      - SECRET_KEY_BASE=abc123
-      - DATABASE_ADAPTER=postgresql
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+
+  woker:
+    <<: *huginn
+    network_mode: "host"
+    command: bundle exec rails runner bin/threaded.rb
+    environment:
       - DATABASE_HOST=0.0.0.0
       - DATABASE_PORT=5431
-      - DATABASE_NAME=huginn
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
 
 
   db:
