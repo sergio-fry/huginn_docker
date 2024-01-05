@@ -8,9 +8,6 @@ services:
   # TODO: reverse proxy to host service
   web:
     <<: *huginn
-        #network_mode: "host"
-        #extra_hosts:
-        #  - "host.docker.internal:host-gateway"
     ports:
       - 3000:3000
     command: bash -c "bundle exec rails db:migrate &&
@@ -36,5 +33,5 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_DB=huginn
-
-    # TODO: volumes
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
