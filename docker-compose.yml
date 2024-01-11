@@ -1,6 +1,13 @@
 x-huginn: &huginn
   build: .
   env_file: env
+  environment:
+    - DATABASE_HOST=db
+    - DATABASE_PORT=5432
+    - SELENIUM_HOST=selenium.firefox
+    - SELENIUM_PORT=4444
+    - DRIVER=firefox_remote
+
   depends_on:
     - db
 
@@ -13,25 +20,21 @@ services:
     command: bash -c "bundle exec rails db:migrate &&
       bundle exec rails db:seed &&
       bundle exec rails server -p 3000 -b 0.0.0.0"
-    environment:
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
+    volumes:
+      - ./bin:/opt/bin
 
   woker:
     <<: *huginn
-    network_mode: "host"
     command: bundle exec rails runner bin/threaded.rb
-    environment:
-      - DATABASE_HOST=0.0.0.0
-      - DATABASE_PORT=5431
 
 
   db:
     image: postgres:16.1
-    ports:
-      - 5431:5432
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_DB=huginn
     volumes:
       - ./volumes/postgres:/var/lib/postgresql/data
+
+  selenium.firefox:
+    image: selenium/standalone-firefox:4.16.1
