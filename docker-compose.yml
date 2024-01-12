@@ -26,6 +26,9 @@ services:
   woker:
     <<: *huginn
     command: bundle exec rails runner bin/threaded.rb
+    deploy:
+      replicas: 2
+
 
 
   db:
